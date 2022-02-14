@@ -18,11 +18,28 @@ RasterRenderer::RasterRenderer()
       m_DescriptorPool(m_Device),
       m_UniformBuffer(m_Vma),
       m_CameraTransform(nullptr),
-      m_Mesh(m_Vma) {}
+      m_Mesh(m_Vma),
+      m_ShaderProgram(m_Device, m_RenderPass),
+      m_Material(&m_ShaderProgram) {}
 
 void RasterRenderer::initImpl()
 {
 	Log::trace("RasterRenderer init");
+
+	{
+		Shader vertexShader         = Shader(m_Device);
+		Shader fragmentShader       = Shader(m_Device);
+		vertexShader.m_ShaderFile   = "test.vert";
+		fragmentShader.m_ShaderFile = "test.frag";
+		m_ShaderProgram.m_Shaders.emplace_back(std::move(vertexShader));
+		m_ShaderProgram.m_Shaders.emplace_back(std::move(fragmentShader));
+
+		m_ShaderProgram.getDescriptorSetLayout().m_Bindings = {
+			{ 0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex }
+		};
+
+		m_ShaderProgram.updateShaderData();
+	}
 
 	m_VertexShader.m_ShaderFile   = "test.vert";
 	m_FragmentShader.m_ShaderFile = "test.frag";
@@ -137,8 +154,12 @@ void RasterRenderer::initImpl()
 	registry.emplace<CameraComponent>(camera);
 	m_CameraTransform = &registry.get<TransformComponent>(camera);
 
-	entt::entity cube = m_Scene.instantiate({});
-	registry.emplace<StaticMeshComponent>(cube, &m_Mesh);
+	for (std::size_t i = 0; i < 10000; ++i)
+	{
+		entt::entity cube = m_Scene.instantiate({});
+		registry.emplace<StaticMeshComponent>(cube, &m_Mesh);
+		registry.emplace<MaterialComponent>(cube, &m_Material);
+	}
 }
 
 void RasterRenderer::deinitImpl()

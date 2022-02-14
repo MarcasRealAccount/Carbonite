@@ -10,6 +10,8 @@
 #include "Graphics/Pipeline/ShaderModule.h"
 #include "Mesh/Mesh.h"
 #include "Renderer.h"
+#include "Shader/GraphicsShaderProgram.h"
+#include "Shader/Material.h"
 #include "Shader/Shader.h"
 
 class RasterRenderer : public Renderer
@@ -33,7 +35,9 @@ public:
 	std::vector<Graphics::DescriptorSet> m_DescriptorSets;
 	Graphics::Memory::Buffer             m_UniformBuffer;
 
-	Scene               m_Scene;
-	TransformComponent* m_CameraTransform;
-	Mesh                m_Mesh;
+	Scene                 m_Scene;
+	TransformComponent*   m_CameraTransform;
+	Mesh                  m_Mesh;
+	GraphicsShaderProgram m_ShaderProgram;
+	Material              m_Material;
 };
