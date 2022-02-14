@@ -24,6 +24,9 @@ void Carbonite::init()
 
 	[[maybe_unused]] auto& ecs = ECS::Get();
 
+	loadModAPI();
+	loadAvailableMods();
+
 	// TODO(MarcasRealAccount): Add a way to enable raytracing.
 	m_Renderer = new RasterRenderer();
 	m_Renderer->init();
