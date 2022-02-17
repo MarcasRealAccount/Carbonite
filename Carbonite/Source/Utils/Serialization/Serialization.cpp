@@ -24,6 +24,11 @@ namespace Utils::Serialization
 		return itr != m_Entries.end() ? itr->second.get() : nullptr;
 	}
 
+	void Object::reserve(std::size_t n)
+	{
+		m_Entries.reserve(n);
+	}
+
 	void Array::add(const Entry& entry)
 	{
 		m_Entries.push_back(std::make_unique<Entry>(entry));
